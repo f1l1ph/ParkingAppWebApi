@@ -12,10 +12,10 @@ namespace ParkingAppWebApi.Models
         public required string Name { get; set; }
 
         [Column(TypeName = "varchar(7)")]
-        public required string SPZ { get; set; }
+        public required string PlateNumber { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? delete_Date { get; set; }
+        public DateTime? DeleteDate { get; set; }
 
         [Column(TypeName ="text")]
         public string? Description { get; set; }

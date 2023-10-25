@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ParkingAppWebApi.Models
 {
-    class User
+    public class User
     {
         [Key]
         public int ID { get; set; }
