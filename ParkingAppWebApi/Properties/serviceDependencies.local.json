@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: ParkinAppWebApi, Tenant: Default Directory (filipmasarik04gmail.onmicrosoft.com - Microsoft Entra ID)",
+      "secretStore": "LocalSecretsFile",
+      "type": "identityapp.secretStore",
+      "connectionId": "AzureAD:ClientSecret"
+    },
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ServiceLinker/locations/westus/connectors/MyConnectionString_907AE635FB",
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/parkingappsqlserver/databases/parkingappsqldb",
+      "type": "mssql.azure",
+      "connectionId": "MyConnectionString",
+      "dynamicId": null
+    }
+  }
+}
