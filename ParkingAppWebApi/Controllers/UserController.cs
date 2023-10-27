@@ -47,6 +47,8 @@ namespace ParkingAppWebApi.Controllers
                 Password = password
             };
             return user;
-        }*/
+        }
+    */
+    
     }
 }

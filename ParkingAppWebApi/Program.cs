@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Web;
 using ParkingAppWebApi;
+using ParkingAppWebApi.Services;
 using System;
 
 
@@ -18,11 +19,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
             .AddInMemoryTokenCaches();
 
+builder.Services.AddScoped<CarService>();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LOCALHOST_CONNECTIONSTRING")));
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
