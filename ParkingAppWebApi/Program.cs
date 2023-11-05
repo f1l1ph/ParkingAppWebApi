@@ -20,6 +20,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddInMemoryTokenCaches();
 
 builder.Services.AddScoped<CarService>();
+//builder.Services.AddScoped<ITokenService>();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>

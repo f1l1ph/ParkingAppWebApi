@@ -7,14 +7,14 @@ namespace ParkingAppWebApi.Models
     {
         [Key]
         public int ID { get; set; }
-
+        
         [Column(TypeName = "varchar(50)")]
         public required string UserName { get; set; }
 
-        [Column(TypeName = "varchar(50)")]
-        public required string Password { get; set; }
+        public required string UserEmail { get; set; }
 
-        [Column(TypeName = "varbinary(16)")]
-        public string? Salt { get; set; }
+        public required byte[] Password { get; set; }
+
+        public required byte[] Salt { get; set; }
     }
 }
