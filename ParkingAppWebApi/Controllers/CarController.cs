@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Models;
 using ParkingAppWebApi.Services;
 
 namespace ParkingAppWebApi.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class CarController : ControllerBase

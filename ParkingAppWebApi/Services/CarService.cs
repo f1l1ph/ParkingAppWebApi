@@ -15,7 +15,7 @@ namespace ParkingAppWebApi.Services
         public async Task<List<Car>> GetAllCarsAsync()
         {
             var cars = await _context.Cars.ToListAsync();
-            return _context.Cars.ToList();
+            return cars;
         }
 
         public async Task<Car> GetCarById(int id)

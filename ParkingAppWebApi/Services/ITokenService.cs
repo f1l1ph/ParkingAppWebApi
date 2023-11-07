@@ -4,6 +4,6 @@ namespace ParkingAppWebApi.Services
 {
     public interface ITokenService
     {
-        string CreateToken(User user);
+        string CreateToken(string userName);
     }
 }
