@@ -26,13 +26,13 @@ namespace ParkingAppWebApi.Services
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User> CreateUser(UserRegisterModelDTO user)
+        public async Task<bool> CreateUser(UserRegisterModelDTO user)
         {
-            if(user == null) { return null; }
+            if(user == null) { return false; }
 
             if (await UserExists(user.UserName, user.Email))
             {
-                return null;//BadRequest("Username or email Is Already Taken");
+                return false;//BadRequest("Username or email Is Already Taken");
             }
 
             var hmac = new HMACSHA256();
@@ -47,12 +47,16 @@ namespace ParkingAppWebApi.Services
             };
 
             _context.Users.Add(_user);
-            await _context.SaveChangesAsync();
-            return _user;
+            bool succes = await _context.SaveChangesAsync() > 0;
+            return succes;
         }
 
         private async Task<bool> UserExists(string username, string email)
         {
+            if(username == null || email == null)
+            {
+                return false;
+            }
             bool sameName = await _context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
             bool sameEmail = await _context.Users.AnyAsync(x => x.UserEmail.ToLower() == email.ToLower());
             if (sameName || sameEmail)
@@ -98,6 +102,20 @@ namespace ParkingAppWebApi.Services
             }
 
             return user;
+        }
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            var user = _context.Users.Find(id);
+
+            if (user == null) return false;
+            _context.Remove(user);
+            if( await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            
+            return false;
         }
     }
 }

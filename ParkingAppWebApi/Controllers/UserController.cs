@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Models;
 using ParkingAppWebApi.Services;
 
@@ -20,7 +21,10 @@ namespace ParkingAppWebApi.Controllers
         [HttpPost ("Register")]
         public async Task<IActionResult> Register(UserRegisterModelDTO user)
         {
-            await _service.CreateUser(user);
+            if (!await _service.CreateUser(user)) 
+            {
+                return BadRequest();
+            }
 
             var userDto = new UserDTO
             {
@@ -56,6 +60,16 @@ namespace ParkingAppWebApi.Controllers
         {
             var user = await _service.GetUserByID(id);
             return Ok(user);
+        }
+        [Authorize]
+        [HttpDelete("Delete user by id")]
+        public async Task<IActionResult> DeleteUserByID(int id)
+        {
+            if(!await _service.DeleteUser(id))
+            {
+                return BadRequest();
+            }
+            return Ok("user deleted succesfuly");
         }
     }
 }

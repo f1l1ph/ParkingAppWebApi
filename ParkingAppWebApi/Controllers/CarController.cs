@@ -38,6 +38,27 @@ namespace ParkingAppWebApi.Controllers
             return await _carService.GetAllCarsAsync();
         }
 
+        [HttpGet("CheckForExistingCar")]
+        public async Task<IActionResult> CheckForExistingCar(string num)
+        {
+            var cars = await _carService.GetAllCarsAsync();
+            if(cars == null) { return NotFound(); }
+            if(num == null) { return NotFound(); }
+            List<String> carPlates = new List<string>();
+            for(int i = 0; i < cars.Count; i++) 
+            {
+                carPlates.Add(cars[i].PlateNumber);
+            }
+            if (carPlates.Contains(num))
+            {
+                return Ok("car exists in db");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost("CreateCar")]
         public async Task<IActionResult> CreateCar(Car car)
         {
@@ -55,7 +76,10 @@ namespace ParkingAppWebApi.Controllers
         [HttpDelete("DeleteCarById")]
         public async Task<IActionResult> DeleteCar(int id)
         {
-            await _carService.DeleteCar(id);
+            if(!await _carService.DeleteCar(id))
+            {
+                return BadRequest();
+            }
             return Ok("car successfully deleted");
         }
     }

@@ -66,14 +66,18 @@ namespace ParkingAppWebApi.Services
             }
         }
 
-        public async Task DeleteCar(int id)
+        public async Task<bool> DeleteCar(int id)
         {
             var car = _context.Cars.Find(id);
-            if (car != null)
+
+            if (car == null) return false;
+            _context.Cars.Remove(car);
+            if(await _context.SaveChangesAsync() > 0)
             {
-                _context.Cars.Remove(car);
-                await _context.SaveChangesAsync();
+                return true;
             }
+            
+            return false;
         }
     }
 }
