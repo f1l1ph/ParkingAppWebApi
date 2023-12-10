@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using ParkingAppWebApi;
 using ParkingAppWebApi.Services;
@@ -10,29 +8,22 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
-        .EnableTokenAcquisitionToCallDownstreamApi()
-            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
-            .AddInMemoryTokenCaches();*/
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"] ?? throw new ArgumentNullException("TokenKey"))),
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     };
                 });
 
 
-builder.Services.AddScoped<CarService>();
+builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>

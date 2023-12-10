@@ -7,21 +7,12 @@ namespace ParkingAppWebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(UserService service, ITokenService tokenService) : ControllerBase
     {
-        readonly UserService _service;
-        readonly TokenService _tokenService;
-
-        public UserController(UserService service, TokenService tokenService)
-        {
-            _service = service;
-            _tokenService = tokenService;
-        }
-
         [HttpPost ("Register")]
         public async Task<IActionResult> Register(UserRegisterModelDTO user)
         {
-            if (!await _service.CreateUser(user)) 
+            if (!await service.CreateUser(user)) 
             {
                 return BadRequest();
             }
@@ -29,7 +20,7 @@ namespace ParkingAppWebApi.Controllers
             var userDto = new UserDTO
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user.UserName)
+                Token = tokenService.CreateToken(user.UserName)
             };
             return Ok(userDto);
         }
@@ -37,13 +28,12 @@ namespace ParkingAppWebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(UserLoginModelDTO login)
         {
-            var user = await _service.LoginUser(login);
-            if(user == null) { return Unauthorized("Invalid Username, Email or password"); }
+            var user = await service.LoginUser(login);
 
             var userDto = new UserDTO
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user.UserName)
+                Token = tokenService.CreateToken(user.UserName)
             };
             return userDto;
         }
@@ -51,25 +41,25 @@ namespace ParkingAppWebApi.Controllers
         [HttpGet("selectAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _service.GetAllUsers();
+            var users = await service.GetAllUsers();
             return Ok(users);
         }
 
         [HttpGet("selectUserById")]
         public async Task<IActionResult> GetUserByID(int id)
         {
-            var user = await _service.GetUserByID(id);
+            var user = await service.GetById(id);
             return Ok(user);
         }
         [Authorize]
         [HttpDelete("DeleteUserById")]
         public async Task<IActionResult> DeleteUserByID(int id)
         {
-            if(!await _service.DeleteUser(id))
+            if(!await service.DeleteUser(id))
             {
                 return BadRequest();
             }
-            return Ok("user deleted succesfuly");
+            return Ok("user deleted successfully");
         }
     }
 }

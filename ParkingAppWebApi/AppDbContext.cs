@@ -3,13 +3,8 @@ using ParkingAppWebApi.Models;
 
 namespace ParkingAppWebApi
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-
-        }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Car>()
@@ -17,8 +12,8 @@ namespace ParkingAppWebApi
                 .IsUnique();
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
 
-        public DbSet<Car> Cars { get; set; }
+        public DbSet<Car> Cars { get; set; } = null!;
     }
 }

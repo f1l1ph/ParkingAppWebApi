@@ -5,29 +5,24 @@ using System.Text;
 
 namespace ParkingAppWebApi.Services
 {
-    public class TokenService : ITokenService
+    public class TokenService(IConfiguration config) : ITokenService
     {
-        private readonly SymmetricSecurityKey _key;
+        private readonly SymmetricSecurityKey _key = new(Encoding.UTF8.GetBytes(config["TokenKey"] ?? string.Empty));
 
-        public TokenService(IConfiguration config)
-        {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
-        }
-
-        public string CreateToken(String userName)
+        public string CreateToken(string userName)
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, userName)
+                new(JwtRegisteredClaimNames.NameId, userName)
             };
 
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+            var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7),
-                SigningCredentials = creds,
+                SigningCredentials = credentials,
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

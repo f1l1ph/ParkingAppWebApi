@@ -2,101 +2,62 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Models;
 using ParkingAppWebApi.Services;
-using System;
 
 namespace ParkingAppWebApi.Controllers
 {
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class CarController : ControllerBase
+    public class CarController(CarService carService) : ControllerBase
     {
-        private readonly CarService _carService;
-
-        public CarController(CarService carService)
-        {
-            _carService = carService;
-        }
-
-        [HttpGet ("GetCarByID/{id}")]
+        [HttpGet ("GetByID/{id}")]
         public async Task<IActionResult> GetOneCar(int id)
         {
-            var car = await _carService.GetCarById(id);
+            var car = await carService.GetCarById(id);
 
-            if(car != null)
-            {
-                return Ok(car);
-            }
-            else
-            {
-                return NotFound();
-            }
+            return Ok(car);
         }
 
-        [HttpGet("GetCarByPlate")]
+        [HttpGet("GetByPlate")]
         public async Task<IActionResult> GetCarByPlate(string plate)
         {
-            var cars = await _carService.GetAllCarsAsync();
-            if (cars == null) { return NotFound(); }
-            if (plate == null) { return NotFound(); }
-            List<String> carPlates = new List<string>();
-            for (int i = 0; i < cars.Count; i++)
-            {
-                carPlates.Add(cars[i].PlateNumber);
-                if (carPlates.Contains(plate)) 
-                {
-                    return Ok(cars[i]);
+            var car = await carService.GetCarByPlate(plate);
 
-                }
-            }
-            return NotFound();
+            return car != null ? Ok(car) : NotFound();
         }
 
-        [HttpGet("GetAllCars")]
+        [HttpGet("GetAll")]
         public async Task<IEnumerable<Car>> GetAllCars() 
         {
-            return await _carService.GetAllCarsAsync();
+            return await carService.GetAllCarsAsync();
         }
 
-        [HttpGet("CheckForExistingCar")]
-        public async Task<IActionResult> CheckForExistingCar(string num)
+        [HttpGet("CheckForExisting")]
+        public async Task<IActionResult> CheckForExistingCar(string plate)
         {
-            var cars = await _carService.GetAllCarsAsync();
-            if(cars == null) { return NotFound(); }
-            if(num == null) { return NotFound(); }
-            List<String> carPlates = new List<string>();
-            for(int i = 0; i < cars.Count; i++) 
-            {
-                carPlates.Add(cars[i].PlateNumber);
-            }
-            if (carPlates.Contains(num))
-            {
-                return Ok("car exists in db");
-            }
-            else
-            {
-                return NotFound();
-            }
+            var car = await carService.GetCarByPlate(plate);
+
+            return Ok(car != null);
         }
 
-        [HttpPost("CreateCar")]
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateCar(Car car)
         {
-            await _carService.CreateCar(car);
+            await carService.CreateCar(car);
             return Ok("Car successfully created");
         }
 
-        [HttpPost("EditCar")]
+        [HttpPost("Edit")]
         public async Task<IActionResult> EditCar(int id, Car car)
         {
-            await _carService.UpdateCar(id, car);
-            return Ok(await _carService.GetCarById(id));
+            await carService.UpdateCar(id, car);
+            return Ok(await carService.GetCarById(id));
         }
 
-        [HttpDelete("DeleteCarById")]
+        [HttpDelete("DeleteById")]
         public async Task<IActionResult> DeleteCar(int id)
         {
-            if(!await _carService.DeleteCar(id))
+            if(!await carService.DeleteCar(id))
             {
                 return BadRequest();
             }

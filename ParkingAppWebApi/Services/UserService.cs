@@ -1,35 +1,25 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ParkingAppWebApi.Models;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace ParkingAppWebApi.Services
 {
-    public class UserService
+    public class UserService(AppDbContext context)
     {
-        readonly AppDbContext _context;
-
-        public UserService(AppDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<List<User>> GetAllUsers()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await context.Users.ToListAsync();
             return users;
         }
 
-        public async Task<User> GetUserByID(int id)
+        public async Task<User> GetById(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await context.Users.FindAsync(id) ?? throw new ArgumentOutOfRangeException(nameof(id));
         }
 
         public async Task<bool> CreateUser(UserRegisterModelDTO user)
         {
-            if(user == null) { return false; }
-
             if (await UserExists(user.UserName, user.Email))
             {
                 return false;//BadRequest("Username or email Is Already Taken");
@@ -38,7 +28,7 @@ namespace ParkingAppWebApi.Services
             var hmac = new HMACSHA256();
 
             var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
-            var _user = new User
+            var newUser = new User
             {
                 UserName = user.UserName,
                 Password = hash,
@@ -46,49 +36,22 @@ namespace ParkingAppWebApi.Services
                 UserEmail = user.Email
             };
 
-            _context.Users.Add(_user);
-            bool succes = await _context.SaveChangesAsync() > 0;
-            return succes;
+            context.Users.Add(newUser);
+            return await context.SaveChangesAsync() > 0;
         }
 
         private async Task<bool> UserExists(string username, string email)
         {
-            if(username == null || email == null)
-            {
-                return false;
-            }
-            bool sameName = await _context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
-            bool sameEmail = await _context.Users.AnyAsync(x => x.UserEmail.ToLower() == email.ToLower());
-            if (sameName || sameEmail)
-            {
-                return true;
-            }
-            else return false;
+            var sameName = await context.Users.AnyAsync(x => x.UserName.Equals(username, StringComparison.InvariantCultureIgnoreCase));
+            var sameEmail = await context.Users.AnyAsync(x => x.UserEmail.Equals(email, StringComparison.InvariantCultureIgnoreCase));
+            return sameName || sameEmail;
         }
 
-        public async Task<User> LoginUser(UserLoginModelDTO login)
+        public async Task<User?> LoginUser(UserLoginModelDTO login)
         {
-            User? user = null;
-
-            if (login.Name == null)
-            {
-                user = await _context.Users
-                    .SingleOrDefaultAsync(x => x.UserEmail == login.Email);
-            }
-            else if (login.Email == null)
-            {
-                user = await _context.Users
-                    .SingleOrDefaultAsync(x => x.UserName == login.Name);
-            }
-            else if(login.Email == null && login.Name == null)
-            {
-                return null;//Unauthorized("Invalid UserName or Email");
-            }
-            else
-            {
-                user = await _context.Users
-                    .SingleOrDefaultAsync(x => x.UserName == login.Name);
-            }
+            var user = await context.Users
+                .SingleOrDefaultAsync(x => x.UserName == login.Name);
+            
 
             if (user == null) return null;//Unauthorized("Invalid UserName or Email");
 
@@ -96,7 +59,7 @@ namespace ParkingAppWebApi.Services
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(login.Password));
 
-            for (int i = 0; i < computedHash.Length; i++)
+            for (var i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != user.Password[i]) return null;//Unauthorized("Invalid Password");
             }
@@ -106,16 +69,10 @@ namespace ParkingAppWebApi.Services
 
         public async Task<bool> DeleteUser(int id)
         {
-            var user = _context.Users.Find(id);
+            var user = await GetById(id);
 
-            if (user == null) return false;
-            _context.Remove(user);
-            if( await _context.SaveChangesAsync() > 0)
-            {
-                return true;
-            }
-            
-            return false;
+            context.Remove(user);
+            return await context.SaveChangesAsync() > 0;
         }
     }
 }

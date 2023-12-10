@@ -1,6 +1,4 @@
-﻿using ParkingAppWebApi.Models;
-
-namespace ParkingAppWebApi.Services
+﻿namespace ParkingAppWebApi.Services
 {
     public interface ITokenService
     {
