@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Models;
 using ParkingAppWebApi.Services;
+using System;
 
 namespace ParkingAppWebApi.Controllers
 {
@@ -24,12 +25,31 @@ namespace ParkingAppWebApi.Controllers
 
             if(car != null)
             {
-                return Ok(await _carService.GetCarById(id));
+                return Ok(car);
             }
             else
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet("GetCarByPlate")]
+        public async Task<IActionResult> GetCarByPlate(string plate)
+        {
+            var cars = await _carService.GetAllCarsAsync();
+            if (cars == null) { return NotFound(); }
+            if (plate == null) { return NotFound(); }
+            List<String> carPlates = new List<string>();
+            for (int i = 0; i < cars.Count; i++)
+            {
+                carPlates.Add(cars[i].PlateNumber);
+                if (carPlates.Contains(plate)) 
+                {
+                    return Ok(cars[i]);
+
+                }
+            }
+            return NotFound();
         }
 
         [HttpGet("GetAllCars")]

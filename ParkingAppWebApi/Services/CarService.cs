@@ -23,6 +23,11 @@ namespace ParkingAppWebApi.Services
             return await _context.Cars.FindAsync(id);
         }
 
+        public async Task<Car> GetCarByPlate(string plate)
+        {
+            return await _context.Cars.FindAsync(plate);
+        }
+
         public async Task CreateCar(Car car)
         {
             if(car.Description == "string")

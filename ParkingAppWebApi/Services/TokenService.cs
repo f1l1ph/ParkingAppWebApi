@@ -1,5 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using ParkingAppWebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -27,7 +26,7 @@ namespace ParkingAppWebApi.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds,
             };
 

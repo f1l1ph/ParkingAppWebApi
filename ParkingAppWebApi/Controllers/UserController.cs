@@ -48,21 +48,21 @@ namespace ParkingAppWebApi.Controllers
             return userDto;
         }
 
-        [HttpGet("select all users")]
+        [HttpGet("selectAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _service.GetAllUsers();
             return Ok(users);
         }
 
-        [HttpGet("select user by id")]
+        [HttpGet("selectUserById")]
         public async Task<IActionResult> GetUserByID(int id)
         {
             var user = await _service.GetUserByID(id);
             return Ok(user);
         }
         [Authorize]
-        [HttpDelete("Delete user by id")]
+        [HttpDelete("DeleteUserById")]
         public async Task<IActionResult> DeleteUserByID(int id)
         {
             if(!await _service.DeleteUser(id))
