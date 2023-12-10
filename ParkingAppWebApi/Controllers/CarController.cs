@@ -8,7 +8,7 @@ namespace ParkingAppWebApi.Controllers
     [Authorize]
     [Route("[controller]")]
     [ApiController]
-    public class CarController(CarService carService) : ControllerBase
+    public class CarController(ICarService carService) : ControllerBase
     {
         [HttpGet ("GetByID/{id}")]
         public async Task<IActionResult> GetOneCar(int id)
