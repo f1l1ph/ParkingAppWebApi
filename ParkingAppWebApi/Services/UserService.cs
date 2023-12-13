@@ -63,7 +63,6 @@ namespace ParkingAppWebApi.Services
             {
                 if (computedHash[i] != user.Password[i]) return null;//Unauthorized("Invalid Password");
             }
-
             return user;
         }
 

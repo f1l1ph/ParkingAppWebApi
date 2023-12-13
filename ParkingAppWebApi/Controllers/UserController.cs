@@ -29,13 +29,16 @@ namespace ParkingAppWebApi.Controllers
         public async Task<ActionResult<UserDTO>> Login(UserLoginModelDTO login)
         {
             var user = await service.LoginUser(login);
-
-            var userDto = new UserDTO
+            if (user != null)
             {
-                UserName = user.UserName,
-                Token = tokenService.CreateToken(user.UserName)
-            };
-            return userDto;
+                var userDto = new UserDTO
+                {
+                    UserName = user.UserName,
+                    Token = tokenService.CreateToken(user.UserName)
+                };
+                return userDto;
+            }
+            return null;
         }
 
         [HttpGet("selectAllUsers")]
@@ -45,7 +48,7 @@ namespace ParkingAppWebApi.Controllers
             return Ok(users);
         }
 
-        [HttpGet("selectUserById")]
+        [HttpGet("selectUserById/{id}")]
         public async Task<IActionResult> GetUserByID(int id)
         {
             var user = await service.GetById(id);

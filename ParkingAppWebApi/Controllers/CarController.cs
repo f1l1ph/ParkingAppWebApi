@@ -18,7 +18,7 @@ namespace ParkingAppWebApi.Controllers
             return Ok(car);
         }
 
-        [HttpGet("GetByPlate")]
+        [HttpGet("GetByPlate/{plate}")]
         public async Task<IActionResult> GetCarByPlate(string plate)
         {
             var car = await carService.GetCarByPlate(plate);
@@ -32,7 +32,7 @@ namespace ParkingAppWebApi.Controllers
             return await carService.GetAllCarsAsync();
         }
 
-        [HttpGet("CheckForExisting")]
+        [HttpGet("CheckForExisting/{plate}")]
         public async Task<IActionResult> CheckForExistingCar(string plate)
         {
             var car = await carService.GetCarByPlate(plate);
@@ -54,7 +54,7 @@ namespace ParkingAppWebApi.Controllers
             return Ok(await carService.GetCarById(id));
         }
 
-        [HttpDelete("DeleteById")]
+        [HttpDelete("DeleteById/{id}")]
         public async Task<IActionResult> DeleteCar(int id)
         {
             if(!await carService.DeleteCar(id))
