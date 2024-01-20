@@ -13,6 +13,12 @@
       "type": "mssql.azure",
       "connectionId": "MyConnectionString",
       "dynamicId": null
+    },
+    "sqlite1": {
+      "secretStore": "LocalSecretsFile",
+      "type": "sqlite.local",
+      "connectionId": "ConnectionStrings:Sqlite2",
+      "dynamicId": null
     }
   }
 }

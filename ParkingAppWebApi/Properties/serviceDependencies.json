@@ -11,6 +11,11 @@
     },
     "apis1": {
       "type": "apis"
+    },
+    "sqlite1": {
+      "type": "sqlite",
+      "connectionId": "ConnectionStrings:Sqlite2",
+      "dynamicId": null
     }
   }
 }

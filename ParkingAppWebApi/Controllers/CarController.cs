@@ -47,6 +47,13 @@ namespace ParkingAppWebApi.Controllers
             return Ok("Car successfully created");
         }
 
+        [HttpPost("CreateBulk")]
+        public async Task<IActionResult> CreateCars(List<Car> cars)
+        {
+            await carService.CreateCar(cars[0]);
+            return Ok("cars added to db");
+        }
+
         [HttpPost("Edit")]
         public async Task<IActionResult> EditCar(int id, Car car)
         {

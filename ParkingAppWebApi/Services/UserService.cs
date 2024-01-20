@@ -20,10 +20,10 @@ namespace ParkingAppWebApi.Services
 
         public async Task<bool> CreateUser(UserRegisterModelDTO user)
         {
-            if (await UserExists(user.UserName, user.Email))
-            {
-                return false;//BadRequest("Username or email Is Already Taken");
-            }
+            //if (await UserExists(user.UserName, user.Email))
+            //{
+            //    return false;//BadRequest("Username or email Is Already Taken");
+            //}
 
             var hmac = new HMACSHA256();
 
