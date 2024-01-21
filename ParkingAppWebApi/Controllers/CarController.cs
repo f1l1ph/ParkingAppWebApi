@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Models;
 using ParkingAppWebApi.Services;
+using ParkingAppWebApi.Validation;
 
 namespace ParkingAppWebApi.Controllers
 {
@@ -43,6 +44,10 @@ namespace ParkingAppWebApi.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateCar(Car car)
         {
+            var validator = new CarValidator();
+            var valResult = await validator.ValidateAsync(car);
+            if (!valResult.IsValid) { return NotFound("wrong car format"); }
+
             await carService.CreateCar(car);
             return Ok("Car successfully created");
         }
@@ -50,7 +55,14 @@ namespace ParkingAppWebApi.Controllers
         [HttpPost("CreateBulk")]
         public async Task<IActionResult> CreateCars(List<Car> cars)
         {
-            await carService.CreateCar(cars[0]);
+            var validator = new CarValidator();
+            foreach (var car in cars)
+            {
+                var valResult = await validator.ValidateAsync(car);
+                if (!valResult.IsValid) { return NotFound("wrong format"); }
+
+            }
+            await carService.CreateCars(cars);
             return Ok("cars added to db");
         }
 

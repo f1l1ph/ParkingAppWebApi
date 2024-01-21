@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ParkingAppWebApi.Models;
+using ParkingAppWebApi.Validation;
 
 namespace ParkingAppWebApi.Services;
 
