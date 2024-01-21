@@ -20,12 +20,9 @@ namespace ParkingAppWebApi.Services
 
         public async Task<bool> CreateUser(UserRegisterModelDTO user)
         {
-            //if (await UserExists(user.UserName, user.Email))
-            //{
-            //    return false;//BadRequest("Username or email Is Already Taken");
-            //}
-
             var hmac = new HMACSHA256();
+
+            if (await UserExists(user.UserName)) { return false; }
 
             var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(user.Password));
             var newUser = new User
@@ -40,11 +37,10 @@ namespace ParkingAppWebApi.Services
             return await context.SaveChangesAsync() > 0;
         }
 
-        private async Task<bool> UserExists(string username, string email)
+        private async Task<bool> UserExists(string username)
         {
-            var sameName = await context.Users.AnyAsync(x => x.UserName.Equals(username, StringComparison.InvariantCultureIgnoreCase));
-            var sameEmail = await context.Users.AnyAsync(x => x.UserEmail.Equals(email, StringComparison.InvariantCultureIgnoreCase));
-            return sameName || sameEmail;
+            var sameName = await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+            return sameName;
         }
 
         public async Task<User?> LoginUser(UserLoginModelDTO login)

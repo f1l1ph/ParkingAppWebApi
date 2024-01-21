@@ -3,7 +3,7 @@ using ParkingAppWebApi.Models;
 
 namespace ParkingAppWebApi.Services;
 
-public class CarService(AppDbContext context) : ICarService
+public class CarService(AppDbContext context, ValidationService validationService) : ICarService
 {
     public async Task<List<Car>> GetAllCarsAsync()
     {
@@ -18,21 +18,36 @@ public class CarService(AppDbContext context) : ICarService
 
     public async Task<Car?> GetCarByPlate(string plate)
     {
-        return await context.Cars.FirstOrDefaultAsync(car => car.PlateNumber == plate);
+        try
+        {
+            //if (!validationService.ValidateLicensePlate(plate)) { return null; }
+
+            var car = await context.Cars.FirstOrDefaultAsync(car => car.PlateNumber == plate);
+            return car;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.InnerException);
+            return null;
+        }
     }
 
     public async Task CreateCar(Car car)
     {
-        //ToDo validacia poli
+        //if(!await validationService.ValidateAndCheckLicensePlate(car.PlateNumber)) { return; }
+
         await context.Cars.AddAsync(car);
         await context.SaveChangesAsync();
     }
 
     public async Task CreateCars(List<Car> cars)
     {
-        for(int i = 0; i < cars.Count; i++)
+        for(var i = 0; i < cars.Count; i++)
         {
-            await context.Cars.AddAsync(cars[i]);
+            //if (await validationService.ValidateAndCheckLicensePlate(cars[i].PlateNumber))
+            //{
+                await context.Cars.AddAsync(cars[i]);
+            //}
         }
         await context.SaveChangesAsync();
     }
@@ -41,12 +56,13 @@ public class CarService(AppDbContext context) : ICarService
     {
         var dbCar = await GetCarById(id);
 
+        //if(!validationService.ValidateLicensePlate(car.PlateNumber)){ return; }
+
         dbCar.Name = car.Name;
         dbCar.PlateNumber = car.PlateNumber;
         dbCar.Description = car.Description;
         dbCar.ExpirationDate = car.ExpirationDate;
 
-        //TODO treba ? context.Entry(dbCar).State = EntityState.Modified;
         await context.SaveChangesAsync();
     }
 
