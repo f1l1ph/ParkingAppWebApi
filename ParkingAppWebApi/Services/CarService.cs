@@ -20,7 +20,7 @@ public class CarService(AppDbContext context, ValidationService validationServic
     {
         try
         {
-            //if (!validationService.ValidateLicensePlate(plate)) { return null; }
+            if (!validationService.ValidateLicensePlate(plate)) { return null; }
 
             var car = await context.Cars.FirstOrDefaultAsync(car => car.PlateNumber == plate);
             return car;
@@ -34,7 +34,7 @@ public class CarService(AppDbContext context, ValidationService validationServic
 
     public async Task CreateCar(Car car)
     {
-        //if(!await validationService.ValidateAndCheckLicensePlate(car.PlateNumber)) { return; }
+        if(!await ValidateAndCheckTask(car.PlateNumber)) { return; }
 
         await context.Cars.AddAsync(car);
         await context.SaveChangesAsync();
@@ -44,10 +44,10 @@ public class CarService(AppDbContext context, ValidationService validationServic
     {
         for(var i = 0; i < cars.Count; i++)
         {
-            //if (await validationService.ValidateAndCheckLicensePlate(cars[i].PlateNumber))
-            //{
+            if (await ValidateAndCheckTask(cars[i].PlateNumber))
+            {
                 await context.Cars.AddAsync(cars[i]);
-            //}
+            }
         }
         await context.SaveChangesAsync();
     }
@@ -56,7 +56,7 @@ public class CarService(AppDbContext context, ValidationService validationServic
     {
         var dbCar = await GetCarById(id);
 
-        //if(!validationService.ValidateLicensePlate(car.PlateNumber)){ return; }
+        if(!validationService.ValidateLicensePlate(car.PlateNumber)){ return; }
 
         dbCar.Name = car.Name;
         dbCar.PlateNumber = car.PlateNumber;
@@ -73,5 +73,12 @@ public class CarService(AppDbContext context, ValidationService validationServic
         context.Cars.Remove(car);
 
         return await context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> ValidateAndCheckTask(string plate)
+    {
+        var carExist = await GetCarByPlate(plate);
+
+        return validationService.ValidateLicensePlate(plate) && carExist == null;
     }
 }

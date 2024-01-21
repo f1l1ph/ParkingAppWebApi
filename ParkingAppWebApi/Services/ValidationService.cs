@@ -2,15 +2,8 @@
 
 namespace ParkingAppWebApi.Services;
 
-public class ValidationService(ICarService carService)
+public class ValidationService()
 {
-    public async Task<bool> ValidateAndCheckLicensePlate(string licensePlate)
-    {
-        var carExist = await carService.GetCarByPlate(licensePlate);
-
-        return ValidateLicensePlate(licensePlate) && carExist == null;
-    }
-
     public bool ValidateLicensePlate(string licensePlate)
     {
         var pattern = @"^[A-Z]{2}\d{3}[A-Z]{2}$";
