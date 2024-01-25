@@ -21,6 +21,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     };
                 });
 
+builder.Services.AddScoped<LprCheckService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<UserService>();
