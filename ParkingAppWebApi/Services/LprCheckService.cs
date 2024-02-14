@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Refit;
 
 namespace ParkingAppWebApi.Services;
 
@@ -13,6 +14,8 @@ public class LprCheckService
 
     public async Task<string> CheckLicensePlateAsync(IFormFile image)
     {
-        return await _api.CheckPlateByImageTask(image);
+        var imgStream = image.OpenReadStream();
+
+        return await _api.CheckPlateByImageTask(new StreamPart(imgStream, "image.jpg", image.ContentType));
     }
 }

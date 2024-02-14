@@ -6,6 +6,6 @@ public interface ILprAPI
 {
     [Multipart]
     [Post("/upload-image/")]
-    Task<string> CheckPlateByImageTask([AliasAs("image")] IFormFile image);
+    Task<string> CheckPlateByImageTask([AliasAs("image")] StreamPart image);
 
 }
