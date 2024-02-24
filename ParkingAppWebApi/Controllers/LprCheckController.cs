@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ParkingAppWebApi.Services;
-using Microsoft.AspNetCore.Mvc;
+using Refit;
 
 namespace ParkingAppWebApi.Controllers
 {
-    //[Authorize]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     [Route("[controller]")]
     [ApiController]
     public class LprCheckController(LprCheckService service) : ControllerBase
     {
         [HttpPost("/CheckLicensePlate/")]
-        public async Task<IActionResult> GetOneCar([FromForm] IFormFile image)
+        public async Task<IActionResult> GetOneCar(ByteArrayPart image)
         {
             try
             {
-                var plateNum = await service.CheckLicensePlateAsync(image);
+                Stream str = new MemoryStream(image.Value);
+
+                var plateNum = await service.CheckLicensePlateAsync(new StreamPart(str, image.FileName, image.ContentType));
                 return Ok(plateNum);
             }
             catch (Exception e)

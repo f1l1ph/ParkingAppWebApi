@@ -12,10 +12,8 @@ public class LprCheckService
         _api = RestService.For<ILprAPI>("http://127.0.0.1:8000");
     }
 
-    public async Task<string> CheckLicensePlateAsync(IFormFile image)
+    public async Task<string> CheckLicensePlateAsync(StreamPart image)
     {
-        var imgStream = image.OpenReadStream();
-
-        return await _api.CheckPlateByImageTask(new StreamPart(imgStream, "image.jpg", image.ContentType));
+        return await _api.CheckPlateByImageTask(image);
     }
 }
