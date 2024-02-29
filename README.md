@@ -8,7 +8,9 @@ The project contains:
  - Web Api 2(![PythonBackend-parkingApp](https://github.com/f1l1ph/ParkoviskoCheckingAPP) repository)
 
 Project was made to check on whether cars on school parking lots belong to students and teachers or to someone else who isn't related to school.
-License plate numbers and details are all stored in database and Web Api is communicating with database.
+License plate numbers and details are all stored in database and Web Api 1 is communicating with database.
+User can add, remove, edit or look at cars that are stored in database. 
+User can also verify if car's license plate number is stored in database based on picture of license plate (in this case webApi 1 communicates with webApi 2 where image processing happens).
 
 ---
 Web Api details:
