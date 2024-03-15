@@ -14,6 +14,8 @@ public class LprCheckService
 
     public async Task<string> CheckLicensePlateAsync(StreamPart image)
     {
-        return await _api.CheckPlateByImageTask(image);
+        var result = await _api.CheckPlateByImageTask(image);
+
+        return result ?? "notFound";
     }
 }

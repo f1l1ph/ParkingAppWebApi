@@ -4,7 +4,7 @@ using Refit;
 
 namespace ParkingAppWebApi.Controllers
 {
-    [Microsoft.AspNetCore.Authorization.Authorize]
+            [Microsoft.AspNetCore.Authorization.Authorize]
     [Route("[controller]")]
     [ApiController]
     public class LprCheckController(LprCheckService service) : ControllerBase
