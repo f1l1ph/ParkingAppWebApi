@@ -9,7 +9,7 @@ public class LprCheckService
 
     public LprCheckService()
     {
-        _api = RestService.For<ILprAPI>("http://127.0.0.1:8000");
+        _api = RestService.For<ILprAPI>("http://127.0.0.1:8000/");
     }
 
     public async Task<string> CheckLicensePlateAsync(StreamPart image)
